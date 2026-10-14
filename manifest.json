@@ -12,8 +12,8 @@
         "changelog": "Release version 1.0.0.0. See details on GitHub.",
         "targetAbi": "10.9.0.0",
         "sourceUrl": "https://github.com/Revine-dev/jellyfin-enhanced-video-previews/releases/download/v1.0.0.0/jellyfin-enhanced-video-previews-1.0.0.0.zip",
-        "checksum": "937a91e9997cb176541829ac77bbc191",
-        "timestamp": "2026-10-14T23:24:37.929Z"
+        "checksum": "09015db8d34524ab5b29a1d3ffa0d0b3",
+        "timestamp": "2026-10-14T23:27:12.772Z"
       }
     ]
   }

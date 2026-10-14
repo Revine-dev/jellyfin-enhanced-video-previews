@@ -4,16 +4,16 @@
     "name": "Enhanced Video Previews",
     "description": "Plays video previews on hover over media cards and list items in Jellyfin Web with direct streaming, transcode fallback, and customizable settings.",
     "overview": "Smooth hover video previews for movies, series, and episodes in Jellyfin Web.",
-    "owner": "revine",
+    "owner": "Revine-dev",
     "category": "General",
     "versions": [
       {
         "version": "1.0.0.0",
         "changelog": "Release version 1.0.0.0. See details on GitHub.",
         "targetAbi": "10.9.0.0",
-        "sourceUrl": "https://github.com/revine-dev/jellyfin-enhanced-video-previews/releases/download/v1.0.0.0/jellyfin-enhanced-video-previews-1.0.0.0.zip",
-        "checksum": "d41d8cd98f00b204e9800998ecf8427e",
-        "timestamp": "2026-10-14T23:10:52.688Z"
+        "sourceUrl": "https://github.com/Revine-dev/jellyfin-enhanced-video-previews/releases/download/v1.0.0.0/jellyfin-enhanced-video-previews-1.0.0.0.zip",
+        "checksum": "937a91e9997cb176541829ac77bbc191",
+        "timestamp": "2026-10-14T23:24:37.929Z"
       }
     ]
   }

@@ -1,0 +1,15 @@
+---
+name: "jellyfin-enhanced-video-previews"
+guid: "8a9e2d4f-5b12-4c6e-9a8f-12014f3a9e12"
+version: "1.0.0.0"
+jellyfin_version: "10.9.0"
+owner: "revine"
+nicename: "Enhanced Video Previews"
+description: "Plays video previews on hover over media cards and list items in Jellyfin Web."
+overview: "Smooth hover video previews for Jellyfin Web"
+category: "General"
+artifacts:
+  - "Jellyfin.Plugin.EnhancedVideoPreviews.dll"
+build_type: "dotnet"
+dotnet_configuration: "Release"
+dotnet_framework: "net8.0"

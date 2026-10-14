@@ -1,0 +1,106 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - '[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 1.0.0.0)'
+        required: true
+        default: '1.0.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RAW_VER="${{ github.event.inputs.version }}"
+          else
+            RAW_VER="${GITHUB_REF#refs/tags/}"
+            RAW_VER="${RAW_VER#v}"
+          fi
+          # Ensure 4-part version for targetAbi/assembly version compatibility
+          IFS='.' read -r -a PARTS <<< "$RAW_VER"
+          while [ ${#PARTS[@]} -lt 4 ]; do
+            PARTS+=("0")
+          done
+          VERSION="${PARTS[0]}.${PARTS[1]}.${PARTS[2]}.${PARTS[3]}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Jellyfin.Plugin.EnhancedVideoPreviews.sln
+
+      - name: Build Solution
+        run: |
+          dotnet build Jellyfin.Plugin.EnhancedVideoPreviews.sln \
+            --configuration Release \
+            --no-restore \
+            /p:Version=${{ steps.get_version.outputs.VERSION }} \
+            /p:AssemblyVersion=${{ steps.get_version.outputs.VERSION }} \
+            /p:FileVersion=${{ steps.get_version.outputs.VERSION }}
+
+      - name: Package Release Zip
+        run: |
+          mkdir -p release-pkg
+          find Jellyfin.Plugin.EnhancedVideoPreviews/bin/Release/net8.0 -name "Jellyfin.Plugin.EnhancedVideoPreviews.dll" -exec cp {} release-pkg/ \;
+          cd release-pkg
+          zip -r ../jellyfin-enhanced-video-previews-${{ steps.get_version.outputs.VERSION }}.zip .
+          cd ..
+
+      - name: Calculate Checksum
+        id: checksum
+        run: |
+          ZIP_NAME="jellyfin-enhanced-video-previews-${{ steps.get_version.outputs.VERSION }}.zip"
+          MD5_SUM=$(md5sum "$ZIP_NAME" | awk '{ print $1 }')
+          echo "MD5=$MD5_SUM" >> $GITHUB_OUTPUT
+
+      - name: Update manifest.json
+        run: |
+          node scripts/generate-manifest.js \
+            --version="${{ steps.get_version.outputs.VERSION }}" \
+            --checksum="${{ steps.checksum.outputs.MD5 }}" \
+            --repo="${{ github.repository }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.TAG }}
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          files: |
+            jellyfin-enhanced-video-previews-${{ steps.get_version.outputs.VERSION }}.zip
+            manifest.json
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push updated manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "chore(release): update manifest for ${{ steps.get_version.outputs.VERSION }} [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

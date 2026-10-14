@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Enhanced Video Previews</title>
+  </head>
+  <body>
+    <div
+      id="EnhancedVideoPreviewsConfigPage"
+      data-role="page"
+      class="page type-interior pluginConfigurationPage"
+      data-require="emby-input,emby-button,emby-select,emby-checkbox"
+    >
+      <div data-role="content">
+        <div class="content-primary">
+          <form id="EnhancedVideoPreviewsConfigForm">
+            <div class="verticalSection verticalSection-extrabottompadding">
+              <div class="sectionTitleContainer flex align-items-center">
+                <h2 class="sectionTitle">Enhanced Video Previews</h2>
+                <a
+                  is="emby-linkbutton"
+                  class="raised button-alt headerHelpButton"
+                  target="_blank"
+                  href="https://github.com/revine-dev/jellyfin-enhanced-video-previews"
+                  >GitHub</a
+                >
+              </div>
+              <p class="fieldDescription">
+                Configures smooth hover video previews for movies, TV series,
+                and episodes across the Jellyfin Web interface.
+              </p>
+
+              <!-- Enable Plugin -->
+              <div class="checkboxContainer checkboxContainer-withDescription">
+                <label class="emby-checkbox-label">
+                  <input
+                    id="chkEnabled"
+                    name="chkEnabled"
+                    type="checkbox"
+                    is="emby-checkbox"
+                  />
+                  <span>Enable Enhanced Video Previews</span>
+                </label>
+                <div class="fieldDescription">
+                  Toggle video preview playback on or off globally.
+                </div>
+              </div>
+
+              <!-- Auto Inject Script -->
+              <div class="checkboxContainer checkboxContainer-withDescription">
+                <label class="emby-checkbox-label">
+                  <input
+                    id="chkAutoInject"
+                    name="chkAutoInject"
+                    type="checkbox"
+                    is="emby-checkbox"
+                  />
+                  <span
+                    >Automatically Inject Client Script into index.html</span
+                  >
+                </label>
+                <div class="fieldDescription">
+                  When enabled, the plugin automatically adds the client script
+                  to Jellyfin's web assets. If your container filesystem is
+                  read-only, see the manual injection instructions below.
+                </div>
+              </div>
+
+              <!-- Preview Start Time -->
+              <div class="inputContainer">
+                <label
+                  class="inputLabel inputLabelUnfocused"
+                  for="txtPreviewStartTime"
+                  >Preview Start Time (seconds)</label
+                >
+                <input
+                  id="txtPreviewStartTime"
+                  name="txtPreviewStartTime"
+                  type="number"
+                  is="emby-input"
+                  min="0"
+                  step="10"
+                />
+                <div class="fieldDescription">
+                  Time in seconds where the video preview will start (e.g., 840
+                  = 14 minutes in). If media is shorter than this duration, it
+                  automatically starts at 15% into the video to avoid intro
+                  sequences.
+                </div>
+              </div>
+
+              <!-- Hover Delay -->
+              <div class="inputContainer">
+                <label
+                  class="inputLabel inputLabelUnfocused"
+                  for="txtHoverDelay"
+                  >Hover Delay (milliseconds)</label
+                >
+                <input
+                  id="txtHoverDelay"
+                  name="txtHoverDelay"
+                  type="number"
+                  is="emby-input"
+                  min="50"
+                  max="2000"
+                  step="25"
+                />
+                <div class="fieldDescription">
+                  Milliseconds of mouse hover before preview begins playing
+                  (recommended: 100 - 200 ms).
+                </div>
+              </div>
+
+              <!-- Playback Speed -->
+              <div class="selectContainer">
+                <label class="selectLabel" for="selectPlaybackSpeed"
+                  >Playback Speed</label
+                >
+                <select
+                  is="emby-select"
+                  id="selectPlaybackSpeed"
+                  name="selectPlaybackSpeed"
+                  class="emby-select-withcolor emby-select"
+                >
+                  <option value="0.75">0.75x</option>
+                  <option value="1.0">1.0x (Normal)</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="2.0">2.0x</option>
+                </select>
+                <div class="fieldDescription">
+                  Playback rate used during video previews.
+                </div>
+              </div>
+
+              <!-- Transcode Width -->
+              <div class="selectContainer">
+                <label class="selectLabel" for="selectTranscodeWidth"
+                  >Transcode Resolution Width</label
+                >
+                <select
+                  is="emby-select"
+                  id="selectTranscodeWidth"
+                  name="selectTranscodeWidth"
+                  class="emby-select-withcolor emby-select"
+                >
+                  <option value="240">
+                    240p (Lowest bandwidth / fastest transcode)
+                  </option>
+                  <option value="320">320p (Original default)</option>
+                  <option value="360">360p (Balanced crispness & speed)</option>
+                  <option value="480">480p (Standard definition)</option>
+                  <option value="640">640p (High definition preview)</option>
+                </select>
+                <div class="fieldDescription">
+                  Resolution width used when transcoding is required.
+                </div>
+              </div>
+
+              <!-- Direct Play -->
+              <div class="checkboxContainer checkboxContainer-withDescription">
+                <label class="emby-checkbox-label">
+                  <input
+                    id="chkPreferDirectStream"
+                    name="chkPreferDirectStream"
+                    type="checkbox"
+                    is="emby-checkbox"
+                  />
+                  <span>Prefer Direct Stream</span>
+                </label>
+                <div class="fieldDescription">
+                  Attempts direct stream playback without server transcoding
+                  first.
+                </div>
+              </div>
+
+              <!-- Fallback to Transcoding -->
+              <div class="checkboxContainer checkboxContainer-withDescription">
+                <label class="emby-checkbox-label">
+                  <input
+                    id="chkFallbackTranscoding"
+                    name="chkFallbackTranscoding"
+                    type="checkbox"
+                    is="emby-checkbox"
+                  />
+                  <span>Fallback to Transcoding</span>
+                </label>
+                <div class="fieldDescription">
+                  Falls back to server transcoding if direct streaming cannot be
+                  played by the browser.
+                </div>
+              </div>
+
+              <!-- Mute Audio -->
+              <div class="checkboxContainer checkboxContainer-withDescription">
+                <label class="emby-checkbox-label">
+                  <input
+                    id="chkMuteAudio"
+                    name="chkMuteAudio"
+                    type="checkbox"
+                    is="emby-checkbox"
+                  />
+                  <span>Mute Audio</span>
+                </label>
+                <div class="fieldDescription">
+                  Keeps preview videos muted (recommended, as browsers restrict
+                  autoplay with audio).
+                </div>
+              </div>
+
+              <!-- Loop Preview -->
+              <div class="checkboxContainer checkboxContainer-withDescription">
+                <label class="emby-checkbox-label">
+                  <input
+                    id="chkLoopPreview"
+                    name="chkLoopPreview"
+                    type="checkbox"
+                    is="emby-checkbox"
+                  />
+                  <span>Loop Preview</span>
+                </label>
+                <div class="fieldDescription">
+                  Repeats preview video seamlessly while hovered.
+                </div>
+              </div>
+
+              <!-- Diagnostics & Manual Injection Box -->
+              <div class="verticalSection verticalSection-extrabottompadding">
+                <h3 class="sectionTitle">Environment & Diagnostics</h3>
+                <div
+                  id="injectionStatusContainer"
+                  style="
+                    padding: 12px;
+                    border-radius: 6px;
+                    background: rgba(0, 0, 0, 0.2);
+                    margin-bottom: 12px;
+                  "
+                >
+                  Checking injection status...
+                </div>
+                <div class="fieldDescription">
+                  If automatic injection cannot write to
+                  <code>index.html</code> (e.g. in read-only Docker containers),
+                  add this script tag right before <code>&lt;/body&gt;</code> in
+                  your Jellyfin web <code>index.html</code>:
+                </div>
+                <pre
+                  style="
+                    background: rgba(0, 0, 0, 0.4);
+                    padding: 10px;
+                    border-radius: 4px;
+                    overflow-x: auto;
+                    font-family: monospace;
+                    user-select: all;
+                  "
+                >
+&lt;script plugin="EnhancedVideoPreviews" defer="defer" src="/EnhancedVideoPreviews/ClientScript"&gt;&lt;/script&gt;</pre
+                >
+              </div>
+
+              <div>
+                <button
+                  is="emby-button"
+                  type="submit"
+                  class="raised button-submit block emby-button"
+                >
+                  <span>Save</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <script type="text/javascript">
+        (function () {
+          var pluginId = "8a9e2d4f-5b12-4c6e-9a8f-12014f3a9e12";
+
+          function loadConfig() {
+            Dashboard.showLoadingMsg();
+            ApiClient.getPluginConfiguration(pluginId)
+              .then(function (config) {
+                document.querySelector("#chkEnabled").checked =
+                  config.Enabled !== false;
+                document.querySelector("#chkAutoInject").checked =
+                  config.AutoInjectWebScript !== false;
+                document.querySelector("#txtPreviewStartTime").value =
+                  config.PreviewStartTime || 840;
+                document.querySelector("#txtHoverDelay").value =
+                  config.HoverDelay || 150;
+                document.querySelector("#selectPlaybackSpeed").value = (
+                  config.PlaybackSpeed || 1.0
+                ).toString();
+                document.querySelector("#selectTranscodeWidth").value = (
+                  config.TranscodeWidth || 360
+                ).toString();
+                document.querySelector("#chkPreferDirectStream").checked =
+                  config.PreferDirectStream !== false;
+                document.querySelector("#chkFallbackTranscoding").checked =
+                  config.FallbackToTranscoding !== false;
+                document.querySelector("#chkMuteAudio").checked =
+                  config.MuteAudio !== false;
+                document.querySelector("#chkLoopPreview").checked =
+                  config.LoopPreview !== false;
+                Dashboard.hideLoadingMsg();
+              })
+              .catch(function () {
+                Dashboard.hideLoadingMsg();
+              });
+
+            // Check server diagnostics endpoint
+            fetch(ApiClient.getUrl("EnhancedVideoPreviews/Status"))
+              .then(function (res) {
+                return res.json();
+              })
+              .then(function (status) {
+                var container = document.querySelector(
+                  "#injectionStatusContainer",
+                );
+                if (!container) return;
+                if (status.IsWebIndexWritable) {
+                  container.innerHTML =
+                    '<span style="color: #4caf50; font-weight: bold;">✔ Automatic Injection Active:</span> Jellyfin web root index.html is writable and managed by the plugin.';
+                } else {
+                  container.innerHTML =
+                    '<span style="color: #ff9800; font-weight: bold;">⚠ Notice:</span> Web root index.html is read-only (common in Docker). Use the manual script tag snippet below or a reverse proxy filter if auto-injection cannot write.';
+                }
+              })
+              .catch(function () {
+                var container = document.querySelector(
+                  "#injectionStatusContainer",
+                );
+                if (container) {
+                  container.innerHTML = "Status check completed.";
+                }
+              });
+          }
+
+          function saveConfig(e) {
+            e.preventDefault();
+            Dashboard.showLoadingMsg();
+            ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+              config.Enabled = document.querySelector("#chkEnabled").checked;
+              config.AutoInjectWebScript =
+                document.querySelector("#chkAutoInject").checked;
+              config.PreviewStartTime =
+                parseInt(
+                  document.querySelector("#txtPreviewStartTime").value,
+                  10,
+                ) || 840;
+              config.HoverDelay =
+                parseInt(document.querySelector("#txtHoverDelay").value, 10) ||
+                150;
+              config.PlaybackSpeed =
+                parseFloat(
+                  document.querySelector("#selectPlaybackSpeed").value,
+                ) || 1.0;
+              config.TranscodeWidth =
+                parseInt(
+                  document.querySelector("#selectTranscodeWidth").value,
+                  10,
+                ) || 360;
+              config.PreferDirectStream = document.querySelector(
+                "#chkPreferDirectStream",
+              ).checked;
+              config.FallbackToTranscoding = document.querySelector(
+                "#chkFallbackTranscoding",
+              ).checked;
+              config.MuteAudio =
+                document.querySelector("#chkMuteAudio").checked;
+              config.LoopPreview =
+                document.querySelector("#chkLoopPreview").checked;
+
+              ApiClient.updatePluginConfiguration(pluginId, config).then(
+                function (result) {
+                  Dashboard.processPluginConfigurationUpdateResult(result);
+                },
+              );
+            });
+            return false;
+          }
+
+          var page = document.querySelector("#EnhancedVideoPreviewsConfigPage");
+          page.addEventListener("pageshow", loadConfig);
+          document
+            .querySelector("#EnhancedVideoPreviewsConfigForm")
+            .addEventListener("submit", saveConfig);
+        })();
+      </script>
+    </div>
+  </body>
+</html>

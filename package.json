@@ -1,0 +1,17 @@
+{
+  "name": "jellyfin-enhanced-video-previews",
+  "version": "1.0.0.0",
+  "description": "Smooth hover video previews for movies, series, and episodes in Jellyfin Web.",
+  "scripts": {
+    "manifest": "node scripts/generate-manifest.js",
+    "version:set": "node scripts/update-version.js"
+  },
+  "keywords": [
+    "jellyfin",
+    "jellyfin-plugin",
+    "video-previews",
+    "hover-preview"
+  ],
+  "author": "revine-dev",
+  "license": "MIT"
+}

@@ -1,0 +1,405 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Dark Background Radial Gradient -->
+    <radialGradient id="iconBackdrop" cx="50%" cy="25%" r="85%">
+      <stop offset="0%" stop-color="#181e2b"/>
+      <stop offset="50%" stop-color="#0a0d14"/>
+      <stop offset="100%" stop-color="#04060a"/>
+    </radialGradient>
+
+    <!-- Netflix Red to Jellyfin Purple-Cyan Accent Gradient -->
+    <linearGradient id="netflixAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e50914"/>
+      <stop offset="40%" stop-color="#bd34fe"/>
+      <stop offset="80%" stop-color="#00a4dc"/>
+      <stop offset="100%" stop-color="#00f5d4"/>
+    </linearGradient>
+
+    <!-- Netflix Signature Red Gradient -->
+    <linearGradient id="netflixRed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e50914"/>
+      <stop offset="100%" stop-color="#ff3b30"/>
+    </linearGradient>
+
+    <!-- Cinematic Video Sky / Horizon Gradient -->
+    <linearGradient id="filmSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#060914"/>
+      <stop offset="45%" stop-color="#1d1338"/>
+      <stop offset="75%" stop-color="#3d1445"/>
+      <stop offset="100%" stop-color="#080711"/>
+    </linearGradient>
+
+    <!-- Cosmic Nebula / Movie Scene Artwork -->
+    <linearGradient id="nebulaGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#e50914" stop-opacity="0.9"/>
+      <stop offset="35%" stop-color="#9d4edd" stop-opacity="0.85"/>
+      <stop offset="70%" stop-color="#00a4dc" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00f5d4" stop-opacity="0.8"/>
+    </linearGradient>
+
+    <!-- Anamorphic Lens Flare Gradient -->
+    <linearGradient id="lensFlareGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#00d2ff" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="55%" stop-color="#e50914" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#e50914" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Card Base Glass Gradient -->
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e2433"/>
+      <stop offset="45%" stop-color="#141824"/>
+      <stop offset="100%" stop-color="#0f121c"/>
+    </linearGradient>
+
+    <!-- Film Title Gradient -->
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#00f5d4"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="cinematicGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="buttonGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#ffffff" flood-opacity="0.5"/>
+    </filter>
+
+    <filter id="cursorShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="4" stdDeviation="5" flood-color="#e50914" flood-opacity="0.6"/>
+    </filter>
+
+    <!-- Squircle Icon Border Clip -->
+    <clipPath id="squircleClip">
+      <rect x="16" y="16" width="480" height="480" rx="108" ry="108"/>
+    </clipPath>
+
+    <!-- Film Preview Video Viewport Clip (Top 210px of the Netflix Card) -->
+    <clipPath id="videoViewportClip">
+      <path d="M 72 86 Q 72 70 88 70 L 424 70 Q 440 70 440 86 L 440 280 L 72 280 Z"/>
+    </clipPath>
+
+    <style><![CDATA[
+      /* --- Netflix Preview Hover Animations --- */
+
+      /* Card zoom and pop-out lift on hover */
+      @keyframes netflixCardZoom {
+        0%, 12% {
+          transform: scale(0.94) translateY(12px);
+          filter: drop-shadow(0 14px 16px rgba(0,0,0,0.8));
+        }
+        24%, 82% {
+          transform: scale(1.02) translateY(-8px);
+          filter: drop-shadow(0 28px 30px rgba(0,0,0,0.95)) drop-shadow(0 0 16px rgba(229,9,20,0.35));
+        }
+        94%, 100% {
+          transform: scale(0.94) translateY(12px);
+          filter: drop-shadow(0 14px 16px rgba(0,0,0,0.8));
+        }
+      }
+
+      /* Camera drift inside the video preview */
+      @keyframes cameraDrift {
+        0% { transform: scale(1) translateX(0px) translateY(0px); }
+        50% { transform: scale(1.1) translateX(-18px) translateY(-6px); }
+        100% { transform: scale(1) translateX(0px) translateY(0px); }
+      }
+
+      /* Anamorphic Lens Flare Sweep */
+      @keyframes flareStreak {
+        0%, 15% { transform: translateX(-400px); opacity: 0; }
+        25% { opacity: 0.95; }
+        45% { transform: translateX(450px); opacity: 0; }
+        100% { transform: translateX(450px); opacity: 0; }
+      }
+
+      /* Netflix Video Scrubber Bar Fill */
+      @keyframes netflixScrubber {
+        0%, 20% { width: 0px; opacity: 1; }
+        80% { width: 368px; opacity: 1; }
+        86%, 100% { width: 368px; opacity: 0; }
+      }
+
+      /* Cursor movement simulating mouse hover */
+      @keyframes cursorMove {
+        0%, 8% { transform: translate(50px, 60px) scale(0.9); opacity: 0.8; }
+        22%, 80% { transform: translate(0px, 0px) scale(1); opacity: 1; }
+        92%, 100% { transform: translate(50px, 60px) scale(0.9); opacity: 0.8; }
+      }
+
+      /* Sound waves emitting from the audio button */
+      @keyframes soundWave1 {
+        0%, 100% { opacity: 0.2; transform: scaleX(0.7); }
+        50% { opacity: 1; transform: scaleX(1.2); }
+      }
+      @keyframes soundWave2 {
+        0%, 100% { opacity: 0.3; transform: scaleX(1.1); }
+        50% { opacity: 0.9; transform: scaleX(0.6); }
+      }
+
+      /* Play button pulse */
+      @keyframes playHover {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+      }
+
+      /* Live pulsating green match badge */
+      @keyframes matchPulse {
+        0%, 100% { opacity: 0.9; }
+        50% { opacity: 1; filter: drop-shadow(0 0 6px #46d369); }
+      }
+
+      /* Assign animation classes */
+      .card-stage {
+        animation: netflixCardZoom 6s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
+        transform-origin: 256px 260px;
+      }
+      .video-footage {
+        animation: cameraDrift 8s ease-in-out infinite alternate;
+        transform-origin: center;
+      }
+      .lens-flare {
+        animation: flareStreak 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+      }
+      .scrubber-line {
+        animation: netflixScrubber 6s linear infinite;
+      }
+      .cursor-fly {
+        animation: cursorMove 6s cubic-bezier(0.2, 0.9, 0.3, 1) infinite;
+        transform-origin: 395px 125px;
+      }
+      .btn-play-pulse {
+        animation: playHover 2.5s ease-in-out infinite;
+        transform-origin: 104px 314px;
+      }
+      .wave-bar-1 { animation: soundWave1 0.8s ease-in-out infinite; transform-origin: 405px 255px; }
+      .wave-bar-2 { animation: soundWave2 0.7s ease-in-out infinite 0.2s; transform-origin: 405px 255px; }
+      .match-glow { animation: matchPulse 2s ease-in-out infinite; }
+    ]]></style>
+  </defs>
+
+  <!-- ============================================================== -->
+  <!-- BASE SQUIRCLE ICON FRAME                                       -->
+  <!-- ============================================================== -->
+  <g clip-path="url(#squircleClip)">
+    <!-- Deep Dark Theater Background -->
+    <rect x="16" y="16" width="480" height="480" fill="url(#iconBackdrop)"/>
+
+    <!-- Subtle Ambient Backlight Glow -->
+    <circle cx="256" cy="220" r="180" fill="#e50914" opacity="0.2" filter="url(#cinematicGlow)"/>
+    <circle cx="256" cy="240" r="140" fill="#7928ca" opacity="0.18" filter="url(#cinematicGlow)"/>
+    <circle cx="380" cy="160" r="110" fill="#00f5d4" opacity="0.15" filter="url(#cinematicGlow)"/>
+
+    <!-- Outer Squircle Accent Rim (Netflix Red and Jellyfin Cyan) -->
+    <rect x="17" y="17" width="478" height="478" rx="107" ry="107"
+          fill="none" stroke="url(#netflixAccent)" stroke-width="2.5" opacity="0.6"/>
+
+    <!-- Top Gloss Arc -->
+    <path d="M 60 20 Q 256 12 452 20" stroke="url(#netflixAccent)" stroke-width="2" fill="none" opacity="0.8"/>
+
+    <!-- ============================================================ -->
+    <!-- NETFLIX-STYLE EXPANDED HOVER PREVIEW CARD                    -->
+    <!-- ============================================================ -->
+    <g class="card-stage">
+      <!-- Full Card Base (368w x 365h, rx=22) -->
+      <rect x="72" y="70" width="368" height="365" rx="22" ry="22"
+            fill="url(#cardBg)" stroke="#273147" stroke-width="1.5" />
+
+      <!-- Top Border Highlight -->
+      <path d="M 94 70 L 418 70" stroke="rgba(255,255,255,0.22)" stroke-width="1" />
+
+      <!-- ========================================================== -->
+      <!-- SECTION 1: VIDEO PREVIEW PLAYER (Top 210px)                -->
+      <!-- ========================================================== -->
+      <g clip-path="url(#videoViewportClip)">
+        <!-- Video Canvas Background Sky -->
+        <rect x="72" y="70" width="368" height="210" fill="url(#filmSky)"/>
+
+        <!-- Dynamic Cinematic Film Scene (Drifting Camera) -->
+        <g class="video-footage">
+          <!-- Deep Space Horizon Stars -->
+          <circle cx="120" cy="110" r="1.5" fill="#ffffff" opacity="0.8"/>
+          <circle cx="160" cy="85" r="1" fill="#ffffff" opacity="0.6"/>
+          <circle cx="240" cy="95" r="2" fill="#00f5d4" opacity="0.9"/>
+          <circle cx="310" cy="120" r="1" fill="#ffffff" opacity="0.7"/>
+          <circle cx="370" cy="90" r="1.5" fill="#ff007f" opacity="0.8"/>
+
+          <!-- Giant Glowing Anamorphic Sun / Nebula Core -->
+          <circle cx="270" cy="165" r="75" fill="url(#nebulaGrad)" opacity="0.65" filter="url(#cinematicGlow)"/>
+          <circle cx="270" cy="165" r="35" fill="#ffffff" opacity="0.8" filter="url(#cinematicGlow)"/>
+
+          <!-- Dramatic Mountain / Alien Landscape Ridge -->
+          <path d="M 50 280 L 50 210 Q 130 145 220 185 T 380 165 T 460 215 L 460 280 Z"
+                fill="url(#nebulaGrad)" opacity="0.75"/>
+          <!-- Silhouette Foreground -->
+          <path d="M 50 280 L 50 230 Q 150 190 250 215 T 460 195 L 460 280 Z"
+                fill="#070a13" opacity="0.92"/>
+
+          <!-- Lone Hero / Astronaut Silhouette watching the preview spectacle -->
+          <path d="M 195 240 Q 195 233 198 233 Q 201 233 201 240 L 203 252 L 193 252 Z" fill="#04060a"/>
+          <circle cx="198" cy="231" r="3.5" fill="#00f5d4" opacity="0.8"/>
+        </g>
+
+        <!-- Anamorphic Blue/Red Lens Flare Streak across Video -->
+        <g class="lens-flare" transform="translate(0, 160)">
+          <ellipse cx="0" cy="0" rx="200" ry="2.5" fill="url(#lensFlareGrad)"/>
+          <circle cx="0" cy="0" r="8" fill="#ffffff" filter="url(#cinematicGlow)"/>
+        </g>
+
+        <!-- Dark Gradient Vignette for UI Readability -->
+        <rect x="72" y="70" width="368" height="70" fill="url(#iconBackdrop)" opacity="0.5"/>
+        <rect x="72" y="210" width="368" height="70" fill="url(#iconBackdrop)" opacity="0.65"/>
+
+        <!-- Movie Title Logo (Top Left on Video Preview) -->
+        <g transform="translate(90, 102)">
+          <!-- Netflix Inspired Red Ribbon Bar -->
+          <rect x="0" y="-12" width="4" height="24" rx="2" fill="#e50914" filter="url(#cinematicGlow)"/>
+          <text x="12" y="5" font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Segoe UI Black', sans-serif"
+                font-size="19" font-weight="900" fill="url(#titleGrad)" letter-spacing="2.5">INTERSTELLAR</text>
+        </g>
+
+        <!-- "TOP 10" Badge under Title (Classic Netflix Cue) -->
+        <g transform="translate(90, 122)">
+          <rect x="0" y="0" width="58" height="15" rx="3" fill="#e50914"/>
+          <text x="5" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="8.5" font-weight="900" fill="#ffffff" letter-spacing="0.5">TOP 10</text>
+          <text x="64" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="8.5" font-weight="800" fill="#ffffff">#1 in Movies Today</text>
+        </g>
+
+        <!-- Maturity Rating and Quality Pill (Bottom Right of Video) -->
+        <g transform="translate(364, 246)">
+          <rect x="0" y="0" width="30" height="18" rx="2" fill="rgba(0,0,0,0.6)" stroke="#8e9bb0" stroke-width="0.8"/>
+          <text x="5" y="13" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+                font-size="9" font-weight="800" fill="#ffffff">16+</text>
+        </g>
+
+        <!-- Audio / Speaker Button (Bottom Right of Video) -->
+        <g transform="translate(404, 246)">
+          <circle cx="10" cy="9" r="11" fill="rgba(0,0,0,0.65)" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
+          <!-- Speaker Horn -->
+          <path d="M 6 10 L 8 10 L 11 13 L 11 5 L 8 8 L 6 8 Z" fill="#ffffff"/>
+          <!-- Animated Soundwaves -->
+          <path d="M 13 7 Q 15 9 13 11" stroke="#00f5d4" stroke-width="1.5" fill="none" stroke-linecap="round" class="wave-bar-1"/>
+          <path d="M 15 5 Q 18 9 15 13" stroke="#e50914" stroke-width="1.5" fill="none" stroke-linecap="round" class="wave-bar-2"/>
+        </g>
+
+        <!-- Netflix Red Preview Scrubber / Progress Bar at bottom of video -->
+        <rect x="72" y="277" width="368" height="3" fill="rgba(255,255,255,0.2)"/>
+        <rect x="72" y="277" width="0" height="3" fill="url(#netflixRed)" class="scrubber-line" filter="url(#cinematicGlow)"/>
+      </g>
+
+      <!-- Glass Divider Line -->
+      <line x1="72" y1="280" x2="440" y2="280" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+
+      <!-- ========================================================== -->
+      <!-- SECTION 2: NETFLIX ACTION CONTROLS AND METADATA            -->
+      <!-- ========================================================== -->
+
+      <!-- Action Buttons Row -->
+      <g transform="translate(90, 298)">
+        <!-- 1. Play Button: Prominent solid white circle with black triangle -->
+        <g class="btn-play-pulse" transform="translate(16, 16)">
+          <circle cx="0" cy="0" r="18" fill="#ffffff" filter="url(#buttonGlow)"/>
+          <path d="M -4 -8 L 8 0 L -4 8 Z" fill="#000000"/>
+        </g>
+
+        <!-- 2. "Add to My List" (+) Button: Outlined circle -->
+        <g transform="translate(56, 16)">
+          <circle cx="0" cy="0" r="16" fill="rgba(42,50,68,0.7)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <path d="M -6 0 L 6 0 M 0 -6 L 0 6" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+        </g>
+
+        <!-- 3. "Like / Thumbs Up" Button: Outlined circle -->
+        <g transform="translate(96, 16)">
+          <circle cx="0" cy="0" r="16" fill="rgba(42,50,68,0.7)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <!-- Thumbs up icon -->
+          <path d="M -5 3 L -5 -1 L -3 -1 L -1 -6 Q 1 -6 1 -4 L 0 -1 L 4 -1 Q 6 -1 5 2 L 4 5 L -5 5 Z"
+                fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linejoin="round"/>
+        </g>
+
+        <!-- 4. "More Info / Expand" Chevron (Far Right) -->
+        <g transform="translate(316, 16)">
+          <circle cx="0" cy="0" r="16" fill="rgba(42,50,68,0.7)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+          <path d="M -5 -2 L 0 3 L 5 -2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </g>
+      </g>
+
+      <!-- Row 2: Metadata Badges (Match %, Year, Resolution, Audio) -->
+      <g transform="translate(90, 356)">
+        <!-- 98% Match (Netflix Green) -->
+        <text x="0" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="12" font-weight="800" fill="#46d369" class="match-glow">98% Match</text>
+
+        <!-- Year -->
+        <text x="82" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="12" font-weight="600" fill="#a0aec0">2026</text>
+
+        <!-- 4K Ultra HD Pill -->
+        <g transform="translate(122, -1)">
+          <rect x="0" y="0" width="30" height="15" rx="3" fill="none" stroke="#718096" stroke-width="1"/>
+          <text x="4" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="8.5" font-weight="800" fill="#e2e8f0">4K</text>
+        </g>
+
+        <!-- HDR Pill -->
+        <g transform="translate(158, -1)">
+          <rect x="0" y="0" width="34" height="15" rx="3" fill="none" stroke="#718096" stroke-width="1"/>
+          <text x="4" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="8.5" font-weight="800" fill="#e2e8f0">HDR</text>
+        </g>
+
+        <!-- Spatial Audio 5.1 Pill -->
+        <g transform="translate(198, -1)">
+          <rect x="0" y="0" width="28" height="15" rx="3" fill="none" stroke="#718096" stroke-width="1"/>
+          <text x="4" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="8.5" font-weight="800" fill="#e2e8f0">5.1</text>
+        </g>
+
+        <!-- Jellyfin Plugin Direct Play Tag (Cyan Accent) -->
+        <g transform="translate(242, -1)">
+          <rect x="0" y="0" width="84" height="15" rx="3" fill="rgba(0,245,212,0.12)" stroke="#00f5d4" stroke-width="1"/>
+          <text x="6" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+                font-size="8" font-weight="800" fill="#00f5d4" letter-spacing="0.3">DIRECT PLAY</text>
+        </g>
+      </g>
+
+      <!-- Row 3: Genre Tags (Dot-Separated) -->
+      <g transform="translate(90, 396)">
+        <text x="0" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="11.5" font-weight="700" fill="#ffffff">Mind-Bending</text>
+        <circle cx="88" cy="8" r="2" fill="#718096"/>
+        <text x="96" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="11.5" font-weight="700" fill="#ffffff">Sci-Fi Adventure</text>
+        <circle cx="204" cy="8" r="2" fill="#718096"/>
+        <text x="212" y="11" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+              font-size="11.5" font-weight="700" fill="#ffffff">Futuristic</text>
+      </g>
+    </g>
+
+    <!-- ============================================================ -->
+    <!-- INTERACTIVE HOVER CURSOR                                     -->
+    <!-- ============================================================ -->
+    <g class="cursor-fly">
+      <!-- Glow Drop Shadow Behind Pointer -->
+      <g filter="url(#cursorShadow)">
+        <path d="M 395 125 L 428 158 L 414 161 L 425 186 L 413 192 L 401 167 L 387 178 Z"
+              fill="#060912" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
+        <!-- Inner Vibrant Fill -->
+        <path d="M 397 129 L 424 156 L 412 159 L 422 182 L 415 186 L 403 164 L 391 173 Z"
+              fill="url(#netflixAccent)"/>
+      </g>
+    </g>
+
+    <!-- Diagonal Glass Sheen across the App Icon -->
+    <path d="M 16 16 L 496 16 L 496 150 Q 256 230 16 150 Z" fill="#ffffff" opacity="0.04"/>
+  </g>
+</svg>

@@ -137,11 +137,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         }
 
         string indexContents = File.ReadAllText(indexFile);
-        string basePath = GetBaseUrlPath();
-        string scriptElement = string.Format(
-            CultureInfo.InvariantCulture,
-            "<script plugin=\"EnhancedVideoPreviews\" defer=\"defer\" src=\"{0}/EnhancedVideoPreviews/ClientScript\"></script>",
-            basePath);
+        string scriptElement = GetScriptTag();
 
         if (config.Enabled && config.AutoInjectWebScript)
         {
@@ -176,6 +172,20 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
                 _logger?.LogInformation("Removed EnhancedVideoPreviews client script from {IndexFile}", indexFile);
             }
         }
+    }
+
+    /// <summary>
+    /// Builds the client script tag markup, shared by the disk-based injector and the
+    /// in-memory response rewriter so both stay in sync.
+    /// </summary>
+    /// <returns>The script element markup.</returns>
+    public string GetScriptTag()
+    {
+        string basePath = GetBaseUrlPath();
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "<script plugin=\"EnhancedVideoPreviews\" defer=\"defer\" src=\"{0}/EnhancedVideoPreviews/ClientScript\"></script>",
+            basePath);
     }
 
     /// <summary>

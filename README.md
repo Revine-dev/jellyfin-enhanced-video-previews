@@ -13,13 +13,13 @@ An adaptation of [bobhasnosoul/jellyfin-video-previews](https://github.com/bobha
 1. In Jellyfin, go to **Dashboard $\rightarrow$ Plugins $\rightarrow$ Repositories** and click **+**.
 2. Add this repository URL:
    ```text
-   https://raw.githubusercontent.com/revine-dev/jellyfin-enhanced-video-previews/main/manifest.json
+   https://raw.githubusercontent.com/Revine-dev/jellyfin-enhanced-video-previews/main/manifest.json
    ```
 3. Open the **Catalog** tab, find **Enhanced Video Previews**, click **Install**, and restart Jellyfin.
 
 ### Option 2: Manual Install
 
-1. Download `jellyfin-enhanced-video-previews-<version>.zip` from [Releases](https://github.com/revine-dev/jellyfin-enhanced-video-previews/releases).
+1. Download `jellyfin-enhanced-video-previews-<version>.zip` from [Releases](https://github.com/Revine-dev/jellyfin-enhanced-video-previews/releases).
 2. Extract `Jellyfin.Plugin.EnhancedVideoPreviews.dll` into your Jellyfin plugins directory:
    - **Docker / Linux**: `/config/plugins/EnhancedVideoPreviews/`
    - **Windows**: `%ProgramData%\Jellyfin\Server\plugins\EnhancedVideoPreviews\`
@@ -42,7 +42,7 @@ Go to **Dashboard $\rightarrow$ Plugins $\rightarrow$ Enhanced Video Previews** 
 - **Playback Speed**: 0.75x to 2.0x (default: 1.0x).
 - **Transcode Resolution**: Fallback resolution if direct play isn't supported (default: 360p).
 - **Direct Play / Transcode Fallback**: Tries direct play first with zero CPU usage, transcodes only when needed.
-- **Audio / Loop**: Mute audio (default: on) and loop preview (default: on).
+- **Audio / Loop**: Mute audio (default: on) and loop preview (default: on). When muting is off, previews still start muted (browsers block autoplay with sound) and auto-unmute once playback begins; a manual mute/unmute button also appears on the preview.
 
 > **Docker Note**: If your container has a read-only web directory, add this tag before `</body>` in `index.html`:
 >

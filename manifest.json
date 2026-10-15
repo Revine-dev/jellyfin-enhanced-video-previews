@@ -6,6 +6,7 @@
     "overview": "Smooth hover video previews for movies, series, and episodes in Jellyfin Web.",
     "owner": "Revine-dev",
     "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/Revine-dev/jellyfin-enhanced-video-previews/main/assets/icon.png",
     "versions": [
       {
         "version": "1.0.0.0",

@@ -10,7 +10,7 @@ const args = process.argv.slice(2).reduce((acc, arg) => {
 
 const version = args.version || "1.0.0.0";
 const checksum = args.checksum || "00000000000000000000000000000000";
-const repo = args.repo || "revine-dev/jellyfin-enhanced-video-previews";
+const repo = args.repo || "Revine-dev/jellyfin-enhanced-video-previews";
 const targetAbi = args.targetAbi || "10.9.0.0";
 const changelog =
   args.changelog || `Release version ${version}. See details on GitHub.`;
@@ -35,14 +35,18 @@ if (!manifest || manifest.length === 0) {
         "Plays video previews on hover over media cards and list items in Jellyfin Web with direct streaming, transcode fallback, and customizable settings.",
       overview:
         "Smooth hover video previews for movies, series, and episodes in Jellyfin Web.",
-      owner: repo.split("/")[0] || "revine-dev",
+      owner: repo.split("/")[0] || "Revine-dev",
       category: "General",
+      imageUrl: `https://raw.githubusercontent.com/${repo}/main/assets/icon.png`,
       versions: [],
     },
   ];
 }
 
 const plugin = manifest[0];
+if (!plugin.imageUrl) {
+  plugin.imageUrl = `https://raw.githubusercontent.com/${repo}/main/assets/icon.png`;
+}
 if (!plugin.versions) {
   plugin.versions = [];
 }

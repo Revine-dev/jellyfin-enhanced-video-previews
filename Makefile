@@ -1,6 +1,6 @@
 VERSION ?= 1.0.0.0
 CONFIG ?= Release
-REPO ?= revine-dev/jellyfin-enhanced-video-previews
+REPO ?= Revine-dev/jellyfin-enhanced-video-previews
 ZIP_NAME = jellyfin-enhanced-video-previews-$(VERSION).zip
 
 .PHONY: all build clean package manifest release

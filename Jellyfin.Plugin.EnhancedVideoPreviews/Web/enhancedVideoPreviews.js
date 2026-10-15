@@ -15,6 +15,16 @@
 
   const PLUGIN_ID = '8a9e2d4f-5b12-4c6e-9a8f-12014f3a9e12';
 
+  const ICON_VOLUME_MUTED =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
+    '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L18.73 21 20 19.73 4.27 3zM12 4 9.91 6.09 12 8.18V4z"/>' +
+    '</svg>';
+
+  const ICON_VOLUME_ON =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false">' +
+    '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>' +
+    '</svg>';
+
   // Default configuration
   let config = {
     enabled: true,
@@ -132,45 +142,53 @@
     }
 
     try {
-      const itemUrl = creds.userId
-        ? `${baseUrl}/Users/${creds.userId}/Items/${itemId}?api_key=${creds.token}`
-        : `${baseUrl}/Items/${itemId}?api_key=${creds.token}`;
+      // Authenticated JSON API calls must use the Authorization header (which
+      // ApiClient builds automatically); the server rejects ?api_key= on these
+      // endpoints. Query-string api_key remains valid only for media URLs
+      // (<video>/<img> src) later in this file, which can't carry headers.
+      const hasApiClient = window.ApiClient && typeof window.ApiClient.getItem === 'function';
 
-      const resp = await fetch(itemUrl);
-      if (!resp.ok) {
+      const fetchJson = async (path, params) => {
+        if (!hasApiClient) {
+          const query = new URLSearchParams({ ...params, api_key: creds.token });
+          const resp = await fetch(`${baseUrl}${path}?${query.toString()}`);
+          return resp.ok ? resp.json() : null;
+        }
+        return null;
+      };
+
+      const item = hasApiClient
+        ? await window.ApiClient.getItem(creds.userId, itemId)
+        : await fetchJson(creds.userId ? `/Users/${creds.userId}/Items/${itemId}` : `/Items/${itemId}`, {});
+
+      if (!item) {
         return null;
       }
 
-      const item = await resp.json();
       let videoId = itemId;
       let durationSeconds = item.RunTimeTicks ? Math.floor(item.RunTimeTicks / 10000000) : 0;
 
       // Handle Series, Season, or Collection by querying the first playable episode/video
       if (item.Type === 'Series' || item.Type === 'Season' || item.Type === 'BoxSet') {
-        const queryParams = new URLSearchParams({
+        const queryOptions = {
           parentId: itemId,
-          recursive: 'true',
+          recursive: true,
           includeItemTypes: item.Type === 'BoxSet' ? 'Movie,Episode,Video' : 'Episode',
           sortBy: 'IndexNumber,SortName',
           sortOrder: 'Ascending',
-          limit: '1',
-          api_key: creds.token,
-        });
+          limit: 1,
+        };
 
-        const queryUrl = creds.userId
-          ? `${baseUrl}/Users/${creds.userId}/Items?${queryParams.toString()}`
-          : `${baseUrl}/Items?${queryParams.toString()}`;
+        const list = hasApiClient
+          ? await window.ApiClient.getItems(creds.userId, queryOptions)
+          : await fetchJson(creds.userId ? `/Users/${creds.userId}/Items` : '/Items', queryOptions);
 
-        const itemsResp = await fetch(queryUrl);
-        if (itemsResp.ok) {
-          const list = await itemsResp.json();
-          if (list.Items && list.Items.length > 0) {
-            const first = list.Items[0];
-            videoId = first.Id;
-            durationSeconds = first.RunTimeTicks ? Math.floor(first.RunTimeTicks / 10000000) : 0;
-          } else {
-            return null;
-          }
+        if (list && list.Items && list.Items.length > 0) {
+          const first = list.Items[0];
+          videoId = first.Id;
+          durationSeconds = first.RunTimeTicks ? Math.floor(first.RunTimeTicks / 10000000) : 0;
+        } else {
+          return null;
         }
       }
 
@@ -256,7 +274,11 @@
     `;
 
     const video = document.createElement('video');
-    video.muted = config.muteAudio;
+    // Always start muted: this plays after a setTimeout (the hover delay), which
+    // breaks the browser's "user gesture" chain, so unmuted autoplay would be
+    // blocked outright. Unmuting an already-playing element isn't restricted,
+    // so we flip it on once playback actually starts (see oncanplay below).
+    video.muted = true;
     video.loop = config.loopPreview;
     video.playsInline = true;
     video.setAttribute('playsinline', '');
@@ -271,6 +293,43 @@
     `;
 
     overlay.appendChild(video);
+
+    // When audio isn't forced off, give the user a manual mute toggle, since
+    // sound auto-starts as soon as playback begins (see oncanplay below).
+    let muteToggleButton = null;
+    if (!config.muteAudio) {
+      muteToggleButton = document.createElement('div');
+      muteToggleButton.className = 'jellyfin-enhanced-preview-mute-toggle';
+      muteToggleButton.style.cssText = `
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 21;
+        font-size: 14px;
+        line-height: 1;
+        color: #fff;
+        user-select: none;
+      `;
+      muteToggleButton.innerHTML = ICON_VOLUME_MUTED;
+      muteToggleButton.title = 'Mute/unmute preview';
+      muteToggleButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        video.muted = !video.muted;
+        muteToggleButton.innerHTML = video.muted ? ICON_VOLUME_MUTED : ICON_VOLUME_ON;
+      });
+      overlay.appendChild(muteToggleButton);
+    }
+
     hostContainer.appendChild(overlay);
 
     activeOverlay = overlay;
@@ -280,6 +339,12 @@
     video.oncanplay = () => {
       if (sessionId === activeSessionId && activeOverlay) {
         activeOverlay.style.opacity = '1';
+        if (!config.muteAudio) {
+          video.muted = false;
+          if (muteToggleButton) {
+            muteToggleButton.innerHTML = ICON_VOLUME_ON;
+          }
+        }
       }
     };
 
